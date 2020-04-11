@@ -1,0 +1,10 @@
+Library/
+Debug/
+Release/
+gslib_2015/
+.vs/
+# Git‚ÌŠÇ—‰º‚©‚çŠO‚·Šg’£q
+*.exe
+*.suo
+*.cso
+Log.txt

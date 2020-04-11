@@ -1,0 +1,9 @@
+
+Debug/
+Release/
+.vs/
+# Git‚ÌŠÇ—‰º‚©‚çŠO‚·Šg’£q
+*.exe
+*.suo
+*.cso
+Log.txt
