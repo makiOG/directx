@@ -1,6 +1,11 @@
 #include "Main.h"
 #include "DirectX.h"
 
+#include <tchar.h>
+#include<locale.h>
+
+#include"WICTextureLoader/WICTextureLoader.cpp"
+
 //--------------------------------------------------------------------------------------
 // DirectX11::DirectX11()関数：コンストラクタ
 //--------------------------------------------------------------------------------------
@@ -46,6 +51,43 @@ HRESULT DirectX11::CompileShaderFromFile(const WCHAR* wcFileName, LPCSTR lpEntry
 	}
 
 	return S_OK;
+}
+//const char* → 
+std::wstring towstring(const char* c) {
+
+	std::wstring tmps;
+
+	if (c == nullptr)
+		return tmps;
+
+	size_t sz = strlen(c);
+
+	tmps.reserve(sz);//メモリを確保し、newが走りすぎないようにする
+
+	const size_t CNT_MAX = 50;
+	char tmpc[CNT_MAX];
+	wchar_t tmpw[CNT_MAX];
+
+
+	const char* p = c;
+	assert(p);
+	while (*p != '\0') {
+		int L = mblen(p, CNT_MAX);//pが指し示すマルチバイト文字のバイト数を取得
+		if (L <= 0)
+			break;
+
+		strncpy_s(tmpc, p, L);//tmpcにその一文字をコピーする
+		tmpc[L] = '\0';
+		//multi byte string to wide char string
+		mbstowcs_s(0,tmpw, tmpc, CNT_MAX);
+		//mbstowcs(tmpw, tmpc, CNT_MAX);//tmpcの終端を0にしてあるので人文字だけ変換する
+		tmps += tmpw;
+
+		p += L;
+
+	}
+
+	return tmps;
 }
 
 //--------------------------------------------------------------------------------------
@@ -435,8 +477,24 @@ HRESULT DirectX11::InitDevice()
 	if (FAILED(hr))
 		return hr;
 
+	ID3D11Resource* res;
+	ID3D11ShaderResourceView* vie;
+
+	setlocale(LC_ALL, "");//必要
+	const char *c = "image3.png";
+	std::wstring s = towstring(c);
+
+
+	//D3DDevice
+	//テクスチャ読み込み
+	hr = CreateWICTextureFromFile(D3DDevice.Get(), s.c_str(), &res, &vie);
+	if (FAILED(hr))
+		return hr;
+
 	return S_OK;
 }
+
+
 
 //--------------------------------------------------------------------------------------
 // DirectX11::Render()：DirectX関係の描画
